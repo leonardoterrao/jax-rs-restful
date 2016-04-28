@@ -13,6 +13,8 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/users")
+@Produces("application/json")
+@Consumes("application/json")
 public class UserController {
 
     @Inject
@@ -20,20 +22,19 @@ public class UserController {
 
     @Path("/all")
     @GET
-    @Produces("application/json")
     public JsonArray getAll() {
         final JsonArrayBuilder builder = Json.createArrayBuilder();
         userService.getAll()
                 .stream()
                 .forEach(u -> builder.add(Json.createObjectBuilder()
                         .add("id", u.getId())
-                        .add("nome", u.getNome())));
-        return builder.build();//http://localhost:8080/jax-rs-restful/api/users/all
+                        .add("nome", u.getNome())
+                        .add("criacao", u.getCriacao().toString())));
+        return builder.build();
     }
 
     @Path("/post")
     @POST
-    @Consumes("application/json")
     public Response createUserInJson(String userJson) {
         Gson gson = new Gson();
         final User user = gson.fromJson(userJson, User.class);
